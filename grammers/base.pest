@@ -1,0 +1,46 @@
+SELECT_KEYWORD = { "select" }
+FROM_KEYWORD   = { "from" }
+CREATE_KEYWORD = { "create" }
+VIEW_KEYWORD   = { "view" }
+WITH_KEYWORD   = { "with" }
+
+/*
+    examples:
+    -1
+    -1.1
+    1.1
+*/
+NUMERIC_LITERAL = @{
+    "-"? ~ ("0" | ASCII_NONZERO_DIGIT ~ ASCII_DIGIT*) ~ ("." ~ ASCII_DIGIT*)? ~ (^"e" ~ ("+" | "-")? ~ ASCII_DIGIT+)?
+}
+
+BREAK_LINE = _{ "\r\n" | "\r" | "\n" }
+WHITESPACE = _{ " " | "\t" | BREAK_LINE }
+
+literal_value = {
+    NUMERIC_LITERAL
+  | STRING_LITERAL
+  | BLOB_LITERAL
+  | NULL_
+  | TRUE_
+  | FALSE_
+  | CURRENT_TIME_
+  | CURRENT_DATE_
+  | CURRENT_TIMESTAMP_
+}
+
+SINGLE_LINE_COMMENT = { "--" ~ ANY ~ BREAK_LINE }
+
+MULTILINE_COMMENT = _{ "/*" ~ (!"\n" ~ ANY)* ~ "*/" }
+
+cte_stmt = {
+    WITH_KEYWORD
+}
+
+select_stmt = {
+    SELECT_KEYWORD ~ FROM_KEYWORD
+}
+
+create_view_stmt = {
+    CREATE_KEYWORD ~ VIEW_KEYWORD
+}
